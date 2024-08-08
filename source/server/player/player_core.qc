@@ -32,7 +32,7 @@ void() Spawns_Init;
 void() SUB_UseTargets;
 void(entity client) LastStand_UnlinkRevivee;
 
-#define PLAYER_START_HEALTH				100
+#define PLAYER_START_HEALTH				50
 
 #define PLAYER_CROUCH_DIFFERENCE_HL 	25
 #define PLAYER_PRONE_DIFFERENCE_HL 		23
