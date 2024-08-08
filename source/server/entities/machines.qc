@@ -53,7 +53,7 @@ void(entity person) W_HideCrosshair;
 #define PERK_SPAWNFLAG_ALLOWPRONE	2048
 #define PERK_SPAWNFLAG_SILENTLEAVE	4096
 
-#define PERK_JUGGERNOG_HEALTH 		160
+#define PERK_JUGGERNOG_HEALTH 		50
 
 //
 // GivePerk(p)
