@@ -1,7 +1,7 @@
 /*
-	server/entities/machines.qc
+	server/entities/perk_a_cola.qc
 
-	perks, power
+	Perks-A-Cola Entity Logic
 
 	Copyright (C) 2021-2024 NZ:P Team
 
@@ -117,7 +117,7 @@ void DrinkPerk() {
 	self.knife_delay = self.reload_delay2 = self.fire_delay2 = self.fire_delay = self.reload_delay = 3 + time;	
 	W_HideCrosshair(self);	
 	Set_W_Frame (machine.weapon_animduration, machine.weapon2_animduration, 2.25, 0, PERK, GivePerk, machine.weapon2model, true, S_RIGHT, true);
-	sound(self, CHAN_ITEM, machine.oldmodel, 1, ATTN_NORM);
+	Sound_PlaySound(self, machine.oldmodel, SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 
 	// Communicate to our engines that this client should display correct Double-Tap icon.
 	if (self.style == P_DOUBLE) {
@@ -150,6 +150,7 @@ void(vector where, float time_alive) SpawnSpark =
 	entity spark = spawn();
 	setmodel(spark, "models/sprites/lightning.spr");
 	setorigin(spark, where);
+	spark.effects = EF_FULLBRIGHT;
 	spark.think = SparkThink;
 	spark.nextthink = time + 0.05;
 	spark.ltime = time + time_alive;
@@ -172,7 +173,7 @@ void() Perk_StopLeaveAnimation =
 	Light_None(self); // Remove light effect
 	SUB_UseTargets();
 
-	sound(self,CHAN_ITEM,"sounds/pu/drop.wav",1,ATTN_NONE); // Play a fitting sound
+	Sound_PlaySound(self, "sounds/pu/drop.wav", SOUND_TYPE_ENV_OBJECT, SOUND_PRIORITY_PLAYALWAYS); // Play a fitting sound
 }
 
 void() Perk_MachineLeaveAnimation =
@@ -200,7 +201,7 @@ void() Perk_MachineGoAwayForReal =
 	self.movetype = MOVETYPE_NOCLIP;
 	self.velocity = v_up * 7;
 
-	sound(self, CHAN_ITEM, "sounds/pu/byebye.wav", 1, ATTN_NORM);
+	Sound_PlaySound(world, "sounds/pu/byebye.wav", SOUND_TYPE_ENV_VOICE, SOUND_PRIORITY_PLAYALWAYS);
 
 	// Do our silly little animation for 6 seconds
 	self.ltime = time + 6;
@@ -277,11 +278,11 @@ void() touch_perk =
 			Player_RemoveScore(other, price);
 
 			// Play the sound of the bottle "vending"
-			sound(self, CHAN_ITEM,"sounds/machines/vend.wav", 1, 1);
+			Sound_PlaySound(self, "sounds/machines/vend.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
 
 			// Play Perk Sting if we can and it exists
 			if (self.aistatus && self.ltime < time) {
-				sound(self, CHAN_AUTO, self.aistatus, 0.8, ATTN_IDLE);
+				Sound_PlaySound(self, self.aistatus, SOUND_TYPE_ENV_MUSIC, SOUND_PRIORITY_PLAYALWAYS);
 				self.ltime = time + self.anim_weapon_time;
 			}
 
@@ -318,7 +319,7 @@ void() touch_perk =
 		} else if (other.button7 && !(other.semi_actions & SEMIACTION_USE)) {
 			// We tried to use, but we don't have the cash..
 			centerprint(other, STR_NOTENOUGHPOINTS);
-			sound(other, 0, "sounds/misc/denybuy.wav", 1, 1);
+			Sound_PlaySound(other, "sounds/misc/denybuy.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
 			other.semi_actions |= SEMIACTION_USE;
 		}
 	}
@@ -330,6 +331,9 @@ void() touch_perk =
 //
 void(entity who) Turn_PerkLight_On =
 {
+	if (who.classname == "perk_pap")
+		return;
+	
 	if (who.spawnflags & PERK_SPAWNFLAG_NOLIGHT) {
 		Light_None(who);
 	}
@@ -387,9 +391,9 @@ void() Perk_Jingle =
 		self.nextthink = time + jinglewaittime;
 	} else {
 		// 15% Chance to Play Jingle
-		local float chance = random();
+		float chance = random();
 		if (chance <= 0.15) {
-			sound(self, CHAN_AUTO, self.powerup_vo, 0.8, ATTN_IDLE);
+			Sound_PlaySound(self, self.powerup_vo, SOUND_TYPE_ENV_MUSIC, SOUND_PRIORITY_PLAYALWAYS);
 			self.ltime = time + self.anim_weapon2_time;
 			jinglewaittime += self.anim_weapon2_time;
 		}
@@ -582,145 +586,6 @@ void() perk_mule =
 {
 	Perk_InitMachine("perk_mule", PERK_MULEKICK_DEFAULT_MODEL, 4000, 4000,
 	PERK_SPAWNFLAG_LIMELIGHT, 1000, 1000, true, true, 8, P_MULE);
-}
-
-//
-// --------------------
-// Power Switch
-// --------------------
-//
-
-void()	turnpower1	=[	1,		turnpower2	] {self.frame = 1;};
-void()	turnpower2	=[	2,		turnpower3	] {self.frame = 2;};
-void()	turnpower3	=[	3,		turnpower4	] {self.frame = 3;};
-void()	turnpower4	=[	4,		SUB_Null	] {self.frame = 4;};
-
-//
-// Turn_Lights()
-// Activates Perk Light Effects and LightStyles
-//
-void() Turn_Lights =
-{
-	// Perk Lights
-	entity tempe = findfloat(world, requirespower, 1);
-	while (tempe)
-	{
-		if (tempe.classname != "perk_pap")
-			Turn_PerkLight_On(tempe);
-		tempe = findfloat (tempe, requirespower, 1);
-	}
-
-	// Light Styles
-	tempe = find(world, classname, "light");
-	while(tempe)
-	{
-		if (tempe.spawnflags & LIGHT_SPAWNFLAG_STARTOFF) {
-			tempe.style = tempe.score;
-			LS_Setup();
-		}/* else if (tempe.spawnflags & LIGHT_SPAWNFLAG_STARTON) {
-			tempe.style = 64;
-			lightstyle(tempe.style, "a");
-		}*/
-
-		tempe = find(tempe, classname, "light");
-	}
-} 
-
-//
-// touch_power_Switch()
-// Power Switch touch function; play Animation and do Power things..
-//
-void() touch_power_Switch =
-{
-	if (other.classname != "player" || other.downed)
-		return;
-
-	if (isPowerOn == true)
-    	return;
-	
-	local entity tempe;
-	local entity old_self;
-
-	useprint (other, 10, 0, 0);
-	if (other.button7 && !isPowerOn) {
-		turnpower1();
-		isPowerOn = true;
-		sound(self, CHAN_ITEM, self.oldmodel, 1, ATTN_NONE);
-
-		// Print message
-		if (self.message) {
-			entity players = find(world, classname, "player");
-			while (players != world) {
-				centerprint(players, strcat(self.message, "\n"));
-				players = find(players, classname, "player");
-			}
-		}
-
-		tempe = find (world, classname, "door_nzp");// trigger all paired doors
-		while (tempe) {
-			local entity starte;
-
-			if (!tempe.targetname) {
-				if (!tempe.cost) {
-					old_self = self;
-					self = tempe;
-					starte = self;
-					door_go_up ();
-					tempe.classname = "door_open";
-					tempe = find (tempe, classname, "door_nzp");// trigger all paired doors
-					self = old_self;
-				}
-			}
-			if (tempe.targetname) {
-				old_self = self;
-				self = tempe;
-				remove(self);
-				self = old_self;
-				tempe = find (tempe, classname, "door_nzp");// trigger all paired doors
-			}
-		}
-
-		tempe = find(world, classname, "perk_pap");
-		while(tempe != world) {
-			entity tempe2 = self;
-			self = tempe;
-			PAP_TurnOn();
-			self = tempe2;
-			tempe = find(tempe, classname, "perk_pap");
-		}
-
-		Turn_Lights();
-		SUB_UseTargets();
-	}
-}
-
-void() power_switch =
-{
-	//
-	// Set Default Stats for Compatibility
-	//
-
-    // Model
-    if (!self.model)
-        self.model = "models/machines/quake_scale/power_switch.mdl";
-
-	// Sound
-	if (!self.oldmodel)
-		self.oldmodel = "sounds/machines/power.wav";
-
-	// Skin
-	if (!self.skin)
-		self.skin = 0;
-
-	self.solid = SOLID_TRIGGER;
-	Precache_Set(self.model);
-	precache_sound(self.oldmodel);
-	setorigin (self, self.origin);
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.classname = "power_switch";
-	self.touch = touch_power_Switch;
-
-	isPowerOn = false;
 }
 
 //

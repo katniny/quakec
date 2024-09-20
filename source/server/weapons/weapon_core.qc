@@ -275,6 +275,11 @@ void() W_TakeOut =
 
 void(float side) W_Give_Ammo =
 {
+	// Prevent ammo duplication when we have a low reserve
+	// amount when attempting to reload a Dual Wield weapon.
+	if (self.weapons[0].weapon_reserve == 0)
+		return;
+
 	float ammo_shot, max_mag, loadammo;
 	
 	max_mag = getWeaponMag(self.weapon);
@@ -953,7 +958,7 @@ void(float side) W_Fire =
 	if (GetFiretype(self.weapon) == FIRETYPE_FLAME && self.cooldown)
 		return;
 
-	if (self.switch_delay > time || self.dive)
+	if (self.switch_delay > time || self.dive || self.isBuying)
 		return;
 
 	//First check that we can actualy fire
@@ -1149,8 +1154,7 @@ void(float side) W_Fire =
 		Set_W_Frame (startframe, endframe, delay, 0, FIRE, WeaponCore_CheckForReload, modelname, FALSE, side, false);
 	}
 
-
-	sound (self, CHAN_WEAPON, soundname, 1, ATTN_NORM);
+	Sound_PlaySound(self, soundname, SOUND_TYPE_WEAPON_FIRE, SOUND_PRIORITY_PLAYALWAYS);
 
 	if (side == S_RIGHT) {
 		self.weapons[0].weapon_magazine = self.weapons[0].weapon_magazine - 1;
@@ -1161,7 +1165,7 @@ void(float side) W_Fire =
 	}
 
 	if (IsPapWeapon(self.weapon) && !WepDef_DoesNotPlayUpgradedSound(self.weapon)) {
-		sound (self, 0, "sounds/weapons/papfire.wav", 1, ATTN_NORM);
+		Sound_PlaySound(self, "sounds/weapons/papfire.wav", SOUND_TYPE_WEAPON_PACK, SOUND_PRIORITY_PLAYALWAYS);
 	}
 	
 	SetUpdate(self, UT_HUD, 6, 0, 0);
@@ -1196,7 +1200,7 @@ void() WeaponCore_Melee =
 	// Do not trigger if we're Aiming down the Sight, or
 	// already melee-ing, or doing some other action.
 	if (self.knife_delay > time || self.new_anim_stop ||
-	self.new_anim2_stop || self.zoom)
+	self.new_anim2_stop || self.zoom || game_over)
 		return;
 
 	// Perform the third person animation if standing
@@ -1227,15 +1231,15 @@ void() WeaponCore_Melee =
 		if (!trace_ent.takedamage && !(trace_ent.flags & FL_CLIENT)) {
 			// Hit a solid surface, so play hard melee sound.
 			if (trace_fraction < 1.0)
-				sound (self, CHAN_WEAPON, "sounds/weapons/knife/knife_hit.wav", 1, ATTN_NORM);
+				Sound_PlaySound(self, "sounds/weapons/knife/knife_hit.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 			// Dead air, swing!
 			else
-				sound (self, CHAN_WEAPON, "sounds/weapons/knife/knife.wav", 1, ATTN_NORM);
+				Sound_PlaySound(self, "sounds/weapons/knife/knife.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 		} else {
 			// AI has a more involved routine than other entities
 			if (trace_ent.aistatus == "1") {
 				// Play a flesh-y impact sound, spawn blood.
-				sound (self, CHAN_WEAPON, "sounds/weapons/knife/knife_hitbod.wav", 1, ATTN_NORM);
+				Sound_PlaySound(self, "sounds/weapons/knife/knife_hitbod.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 	 			SpawnBlood(trace_source + (v_forward * 20), trace_source + (v_forward * 20), 50);
 
 				// Calculate distance to use for the Lunge velocity
@@ -1255,10 +1259,10 @@ void() WeaponCore_Melee =
 
 				// Is this a player? Play the body hit sound and spawn blood, otherwise, solid swing.
 				if (trace_ent.flags & FL_CLIENT) {
-					sound (self, CHAN_WEAPON, "sounds/weapons/knife/knife_hitbod.wav", 1, ATTN_NORM);
+					Sound_PlaySound(self, "sounds/weapons/knife/knife_hitbod.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 					SpawnBlood(trace_source + (v_forward * 20), trace_source + (v_forward * 20), 50);
 				} else {
-					sound (self, CHAN_WEAPON, "sounds/weapons/knife/knife_hit.wav", 1, ATTN_NORM);
+					Sound_PlaySound(self, "sounds/weapons/knife/knife_hit.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 				}
 			}
 
@@ -1321,7 +1325,7 @@ void() switch_nade =
 
 void() GrenadeExplode =
 {
-	sound (self, CHAN_WEAPON, "sounds/weapons/grenade/explode.wav", 1, ATTN_NORM);	
+	Sound_PlaySound(self, "sounds/weapons/grenade/explode.wav", SOUND_TYPE_WEAPON_EXPLODE, SOUND_PRIORITY_ALLOWSKIP);
 
 	if (self.classname == "grenade")
 		DamgageExplode (self, self.owner, 200, 50, 200);
@@ -1445,7 +1449,7 @@ void() checkHold =
 			
 		self.isBuying = true;  
 		Set_W_Frame (3, 6, 0, 5, GRENADE, W_ThrowGrenade, "models/weapons/grenade/v_grenade.mdl", true, S_RIGHT, true);
-		sound (self, CHAN_WEAPON, "sounds/weapons/grenade/throw.wav", 1, ATTN_NORM);
+		Sound_PlaySound(self, "sounds/weapons/grenade/throw.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 		self.reload_delay2 = self.fire_delay2 = self.reload_delay = self.fire_delay = time + 0.4;
 		self.throw_delay = time + 0.9;
 		nzp_rumble(self, 1000, 1200, 75);
@@ -1479,7 +1483,7 @@ void() W_Grenade =
 
 	W_HideCrosshair(self);
 	Set_W_Frame (0, 2, 0.6, 0, GRENADE, checkHold, "models/weapons/grenade/v_grenade.mdl", true, S_RIGHT, true);
-	sound (self, CHAN_WEAPON, "sounds/weapons/grenade/prime.wav", 1, ATTN_NORM);	
+	Sound_PlaySound(self, "sounds/weapons/grenade/prime.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 	self.primary_grenades -= 1;
 	self.reload_delay2 = self.fire_delay2 = self.throw_delay = self.reload_delay = self.fire_delay = time + 6;
 	self.grenade_delay = time + 5;
@@ -1568,7 +1572,7 @@ void() dolphin_dive =		//naievil
 	W_SprintStop();
 	PAnim_EnterDive();
 
-	sound(self, CHAN_VOICE, "sounds/player/jump.wav", 1, 1);
+	Sound_PlaySound(self, "sounds/player/jump.wav", SOUND_TYPE_PLAYER_VOICE, SOUND_PRIORITY_PLAYALWAYS);
 
 	self.oldz = self.origin_z;
 	Player_SetStance(self, PLAYER_STANCE_PRONE, false);
@@ -1747,7 +1751,7 @@ void() CheckPlayer =
 
 		if (self.dive) {
 			if (self.perks & P_FLOP && dist >= 64) {
-				sound (self, CHAN_WEAPON, "sounds/weapons/grenade/explode.wav", 1, ATTN_NORM);	
+				Sound_PlaySound(self, "sounds/weapons/grenade/explode.wav", SOUND_TYPE_WEAPON_EXPLODE, SOUND_PRIORITY_PLAYALWAYS);
 				DamgageExplode (self, self, 5000, 1000, 300);
 
 #ifdef FTE
@@ -2095,10 +2099,21 @@ void() WeaponCore_ClientLogic =
 
 	// If Client has ADS bound to impulse 26 (toggle),
 	// check if the flag is set and W_AimIn()
-	if (self.ads_release)
+	if (self.ads_release) {
+		// A bit of a hack -- but if we are using a dual wield weapon
+		// and we've triggered the toggle ADS, emulate a RMB tap and
+		// remove the ADS toggle flag.
+		if (IsDualWeapon(self.weapon)) {
+			self.ads_release = false;
+			self.has_ads_toggle = false;
+			WeaponCore_AimButtonPressed();
+			WeaponCore_AimButtonReleased();
+			return;
+		}
 		W_AimIn();
-	else if (self.has_ads_toggle)
+	} else if (self.has_ads_toggle) {
 		W_AimOut();
+	}
 
 	// ADS Button Pressed
 	if (self.button8) {
