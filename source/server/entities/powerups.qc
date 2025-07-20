@@ -794,7 +794,7 @@ void() PU_Init =
 					PU_FreePerkRequirement		);
 	PU_AddToStruct(PU_UPGRADEWEAPON,"models/pu/pack!.mdl",			"upgrade.wav",			PU_WeaponUpgrade,
 					PU_UpgradeWeaponRequirement	);
-	PU_AddToStruct(PU_RANDOMWEAPON,"models/weapons/mp40/g_mp40.mdl",			"upgrade.wav",			PU_RandomWeapon,
+	PU_AddToStruct(PU_RANDOMWEAPON,"models/weapons/mp40/g_mp40.mdl",			"random_weapon.wav",			PU_RandomWeapon,
 					PU_RandomWeaponRequirement	);
 
 	// Nuke requires an extra Precache

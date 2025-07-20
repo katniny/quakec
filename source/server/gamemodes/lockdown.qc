@@ -35,8 +35,16 @@ void() Gamemode_Lockdown_Init =
     game_modifier_powerup_weapon_upgrade = true;
 	game_modifier_powerup_random_weapon = true;
 
-	// precache laugh
+	// precache audio
 	precache_sound("sounds/modes/lockdown/laugh.wav");
+	precache_sound("sounds/modes/lockdown/carpenter.wav");
+	precache_sound("sounds/modes/lockdown/double_points.wav");
+	precache_sound("sounds/modes/lockdown/free_perk.wav");
+	precache_sound("sounds/modes/lockdown/insta_kill.wav");
+	precache_sound("sounds/modes/lockdown/kaboom.wav");
+	precache_sound("sounds/modes/lockdown/maxammo.wav");
+	precache_sound("sounds/modes/lockdown/random_weapon.wav");
+	precache_sound("sounds/modes/lockdown/upgrade.wav");
 };
 
 void() Gamemode_Lockdown_Frame =
