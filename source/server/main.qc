@@ -420,6 +420,7 @@ void() worldspawn =
 	game_modifier_powerup_free_perk = false;
 	game_modifier_powerup_max_ammo = true;
 	game_modifier_powerup_weapon_upgrade = false;
+	game_modifier_powerup_random_weapon = false;
 	game_modifier_can_packapunch = true;
 	game_modifier_grenades_explode_on_contact = false;
 	game_modifier_perk_purchase_limit = 8;

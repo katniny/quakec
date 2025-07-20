@@ -481,6 +481,7 @@ float game_modifier_can_packapunch;
 float game_modifier_powerup_free_perk;
 float game_modifier_powerup_max_ammo;
 float game_modifier_powerup_weapon_upgrade;
+float game_modifier_powerup_random_weapon;
 float game_modifier_perk_purchase_limit;
 float game_modifier_cost_multiplier;
 float game_modifier_grenades_explode_on_contact;
