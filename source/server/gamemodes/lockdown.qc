@@ -25,6 +25,9 @@
 
 */
 
+float lock_ran_post_init_logic;
+float lock_ran_endgame;
+
 void() Gamemode_Lockdown_Init =
 {
     // enable the server stopwatch
@@ -36,6 +39,7 @@ void() Gamemode_Lockdown_Init =
 	game_modifier_powerup_random_weapon = true;
 
 	// precache audio
+	precache_sound("sounds/modes/lockdown/intro.wav");
 	precache_sound("sounds/modes/lockdown/laugh.wav");
 	precache_sound("sounds/modes/lockdown/carpenter.wav");
 	precache_sound("sounds/modes/lockdown/double_points.wav");
@@ -45,11 +49,20 @@ void() Gamemode_Lockdown_Init =
 	precache_sound("sounds/modes/lockdown/maxammo.wav");
 	precache_sound("sounds/modes/lockdown/random_weapon.wav");
 	precache_sound("sounds/modes/lockdown/upgrade.wav");
+	precache_sound("sounds/modes/lockdown/lose.wav");
 };
 
 void() Gamemode_Lockdown_Frame =
 {
-    return;
+    if (lock_ran_post_init_logic == false) {
+		Sound_PlaySound(world, "sounds/modes/lockdown/intro.wav", SOUND_TYPE_ENV_VOICE, SOUND_PRIORITY_PLAYALWAYS);
+        lock_ran_post_init_logic = true;
+	}
+
+	if ((find(world, classname, "gameover_watcher")) && lock_ran_endgame == false) {
+		lock_ran_endgame = true;
+		Sound_PlaySound(world, "sounds/modes/lockdown/lose.wav", SOUND_TYPE_ENV_VOICE, SOUND_PRIORITY_PLAYALWAYS);
+	}
 };
 
 void() Gamemode_Lockdown_PlayerSpawn =
