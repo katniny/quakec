@@ -317,6 +317,7 @@ float 	map_compatibility_mode;
 #define GAMEMODE_HARDCORE       3
 #define GAMEMODE_WILDWEST       4
 #define GAMEMODE_STICKSNSTONES  5
+#define GAMEMODE_LOCKDOWN		6
 
 // Misc. player statistics
 .float playernum;

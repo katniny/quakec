@@ -64,6 +64,7 @@ void() Gamemode_Init =
         case GAMEMODE_HARDCORE: Gamemode_Hardcore_Init(); break;
         case GAMEMODE_STICKSNSTONES: Gamemode_Sticks_Init(); break;
         case GAMEMODE_WILDWEST: Gamemode_WW_Init(); break;
+        case GAMEMODE_LOCKDOWN: Gamemode_Lockdown_Init(); break;
         default: error("Received unrecognized gamemode."); break;
     }
 };
@@ -81,6 +82,7 @@ void() Gamemode_Frame =
         case GAMEMODE_HARDCORE: Gamemode_Hardcore_Frame(); break;
         case GAMEMODE_STICKSNSTONES: Gamemode_Sticks_Frame(); break;
         case GAMEMODE_WILDWEST: Gamemode_WW_Frame(); break;
+        case GAMEMODE_LOCKDOWN: Gamemode_Lockdown_Frame(); break;
         default: error("Received unrecognized gamemode."); break;
     }
 
@@ -108,6 +110,7 @@ void() Gamemode_PlayerSpawn =
         case GAMEMODE_HARDCORE: Gamemode_Hardcore_PlayerSpawn(); break;
         case GAMEMODE_STICKSNSTONES: Gamemode_Sticks_PlayerSpawn(); break;
         case GAMEMODE_WILDWEST: Gamemode_WW_PlayerSpawn(); break;
+        case GAMEMODE_LOCKDOWN: Gamemode_Lockdown_PlayerSpawn(); break;
         default: error("Received unrecognized gamemode."); break;
     }
 };

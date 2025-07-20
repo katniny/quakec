@@ -260,6 +260,16 @@ if (self.state == STATE_TOP || self.state == STATE_UP)
 	if (Player_UseButtonPressed(other, self) && !(other.semi_actions & SEMIACTION_USE))
 	{
 		other.semi_actions |= SEMIACTION_USE;
+
+		// prevent the door from being opened in the
+		// lockdown gamemode
+		if (cvar("sv_gamemode") == GAMEMODE_LOCKDOWN) 
+		{
+			Sound_PlaySound(other, "sounds/misc/denybuy.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
+			Sound_PlaySound(other, "sounds/modes/lockdown/laugh.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
+			return;
+		}
+		
 		if (other.points >= door_cost)
 		{
 			door_fire();
@@ -304,6 +314,8 @@ if (self.state == STATE_TOP || self.state == STATE_UP)
 	{
 		if(other.classname == "player" && !other.downed)
 		{
+			if (cvar("sv_gamemode")) return;
+
 			if (self.spawnflags & DOOR_DEBRIS)
 				Player_UseprintWithWait(other, self, 2, door_cost, 0);
 			else
