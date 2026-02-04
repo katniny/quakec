@@ -26,132 +26,221 @@
 */
 #ifndef CSQC
 float(float weapon, float ammo) Gamemode_GetWeaponAmmo;
-float(float damage) Gamemode_GetWeaponDamage;
+float(float damage, float weapon_id, float weapon_tier) Gamemode_GetWeaponDamage;
+float(float current_melee_damage, float weapon, float has_bowie) Gamemode_CalculateMeleeDamage;
+float(float current_multiplier, float current_perks, float weapon, float location) Gamemode_GetWeaponLimbMultiplier;
+float(float wep) EqualPapWeapon;
 #endif
 
-string(float wep) GetWeaponName =
+#ifndef CSQC
+string(float wep, float weapon_tier) GetWeaponName =
 {
+	string weapon_name = "";
 
 	switch (wep)
 	{
 		case W_COLT:
-			return "Colt M1911";
+			weapon_name = "Colt M1911";
+			break;
 		case W_BIATCH:
-      		return "Mustang & Sally";
+      		weapon_name = "Mustang & Sally";
+			break;
 		case W_KAR:
-			return "Kar 98k";
+			weapon_name = "Kar 98k";
+			break;
     	case W_ARMAGEDDON:
-			return "Armageddon";
+			weapon_name = "Armageddon";
+			break;
 		case W_THOMPSON:
-			return "Thompson";
+			weapon_name = "Thompson";
+			break;
 		case W_GIBS:
-			return "Gibs-O-Matic";
+			weapon_name = "Gibs-O-Matic";
+			break;
 		case W_357:
-			return ".357 Magnum";
+			weapon_name = ".357 Magnum";
+			break;
 		case W_KILLU:
-			return ".357 Plus 1 K1L-u";
+			weapon_name = ".357 Plus 1 K1L-u";
+			break;
 		case W_BAR:
-			return "BAR";
+			weapon_name = "BAR";
+			break;
 		case W_WIDOW:
-			return "The Widow Maker";
+			weapon_name = "The Widow Maker";
+			break;
 		case W_BK:
-			return "Ballistic Knife";
+			weapon_name = "Ballistic Knife";
+			break;
 		case W_KRAUS:
-			return "The Krauss Refibrillator";
+			weapon_name = "The Krauss Refibrillator";
+			break;
 		case W_BROWNING:
-			return "Browning M1919";
+			weapon_name = "Browning M1919";
+			break;
 		case W_ACCELERATOR:
-			return "B115 Accelerator";
+			weapon_name = "B115 Accelerator";
+			break;
 		case W_DB:
-			return "Double-Barreled Shotgun";
+			weapon_name = "Double-Barreled Shotgun";
+			break;
 		case W_BORE:
-			return "24 Bore Long Range";
+			weapon_name = "24 Bore Long Range";
+			break;
 		case W_FG:
-			return "FG42";
+			weapon_name = "FG42";
+			break;
 		case W_IMPELLER:
-			return "420 Impeller";
+			weapon_name = "420 Impeller";
+			break;
 		case W_GEWEHR:
-			return "Gewehr 43";
+			weapon_name = "Gewehr 43";
+			break;
 		case W_COMPRESSOR:
-			return "G115 Compressor";
+			weapon_name = "G115 Compressor";
+			break;
 		case W_KAR_SCOPE:
-			return "Scoped Kar 98k";
+			weapon_name = "Scoped Kar 98k";
+			break;
 		case W_HEADCRACKER:
-			return "Headcracker";
+			weapon_name = "Headcracker";
+			break;
 		case W_M1:
-			return "M1 Garand";
+			weapon_name = "M1 Garand";
+			break;
 		case W_M1000:
-			return "M1000";
+			weapon_name = "M1000";
+			break;
 		case W_M1A1:
-			return "M1A1 Carbine";
+			weapon_name = "M1A1 Carbine";
+			break;
 		case W_WIDDER:
-			return "Widdershins RC-1";
+			weapon_name = "Widdershins RC-1";
+			break;
 		case W_M2:
-			return "M2 Flamethrower";
+			weapon_name = "M2 Flamethrower";
+			break;
 		case W_FIW:
-			return "F1W Nitrogen Cooled";
+			weapon_name = "F1W Nitrogen Cooled";
+			break;
 		case W_MP40:
-			return "MP40";
+			weapon_name = "MP40";
+			break;
 		case W_AFTERBURNER:
-			return "The Afterburner";
+			weapon_name = "The Afterburner";
+			break;
 		case W_MP5K:
-			return "MP5K";
+			weapon_name = "MP5K";
+			break;
 		case W_KOLLIDER:
-			return "MP115 Kollider";
+			weapon_name = "MP115 Kollider";
+			break;
 		case W_MG:
-			return "MG42";
+			weapon_name = "MG42";
+			break;
 		case W_BARRACUDA:
-			return "Barracuda FU-A11";
+			weapon_name = "Barracuda FU-A11";
+			break;
 		case W_PANZER:
-			return "Panzerschrek";
+			weapon_name = "Panzerschrek";
+			break;
 		case W_LONGINUS:
-			return "Longinus";
+			weapon_name = "Longinus";
+			break;
 		case W_PPSH:
-			return "PPSh-41";
+			weapon_name = "PPSh-41";
+			break;
 		case W_REAPER:
-			return "The Reaper";
+			weapon_name = "The Reaper";
+			break;
 		case W_PTRS:
-			return "PTRS-41";
+			weapon_name = "PTRS-41";
+			break;
 		case W_PENETRATOR:
-			return "The Penetrator";
+			weapon_name = "The Penetrator";
+			break;
 		case W_RAY:
-			return "Ray Gun";
+			weapon_name = "Ray Gun";
+			break;
 		case W_PORTER:
-			return "Porter's X2 Ray Gun";
+			weapon_name = "Porter's X2 Ray Gun";
+			break;
+		case W_RAYMK2:
+			weapon_name = "Ray Gun Mark II";
+			break;
+		case W_PORTERMK2:
+			weapon_name = "Porter's Mark II Ray Gun";
+			break;
 		case W_SAWNOFF:
-			return "Sawed-Off Shotgun";
+			weapon_name = "Sawed-Off Shotgun";
+			break;
 		case W_SNUFF:
-			return "The Snuff Box";
+			weapon_name = "The Snuff Box";
+			break;
 		case W_STG:
-			return "STG-44";
+			weapon_name = "STG-44";
+			break;
 		case W_SPATZ:
-			return "Spatz-447 +";
+			weapon_name = "Spatz-447 +";
+			break;
 		case W_TRENCH:
-			return "M1897 Trench Gun";
+			weapon_name = "M1897 Trench Gun";
+			break;
 		case W_GUT:
-			return "Gut Shot";
+			weapon_name = "Gut Shot";
+			break;
 		case W_TYPE:
-			return "Type 100";
+			weapon_name = "Type 100";
+			break;
 		case W_SAMURAI:
-			return "1001 Samurais";
+			weapon_name = "1001 Samurais";
+			break;
 		case W_BOWIE:
-			return "Bowie Knife";
+			weapon_name = "Bowie Knife";
+			break;
 		case W_GRENADE:
-			return "Grenades";
+			weapon_name = "Grenades";
+			break;
 		case W_BETTY:
-			return "Bouncing Betty";
+			weapon_name = "Bouncing Betty";
+			break;
     	case W_TESLA:
-      		return "Wunderwaffe DG-2";
+      		weapon_name = "Wunderwaffe DG-2";
+			break;
 		case W_DG3:
-			return "Wunderwaffe DG-3 JZ";
+			weapon_name = "Wunderwaffe DG-3 JZ";
+			break;
 		case W_SPRING:
-			return "Springfield";
+			weapon_name = "Springfield";
+			break;
 		case W_PULVERIZER:
-			return "Pulverizer";
+			weapon_name = "Pulverizer";
+			break;
 		default:
-			return " ";
+			break;
 	}
+
+	if (game_modifier_packapunch_uses_tiers == true && weapon_tier > 0) {
+		// Append the Pack-A-Punch tier to the name if tiers are enabled.
+		if (EqualPapWeapon(wep) == wep) {
+			string tier_numeral = "";
+
+			switch(weapon_tier) {
+				case 1: tier_numeral = "I"; break;
+				case 2: tier_numeral = "II"; break;
+				case 3: tier_numeral = "III"; break;
+				default: break;
+			}
+
+			weapon_name = strcat(weapon_name, " (Tier ");
+			weapon_name = strcat(weapon_name, tier_numeral);
+			weapon_name = strcat(weapon_name, ")");
+		}
+	}
+
+	return weapon_name;
 }
+#endif
 
 string(float item) GetItemName =
 {
@@ -259,6 +348,9 @@ float(float wep) GetFiretype =
 		case W_RAY:
 		case W_PORTER:
 			return FIRETYPE_RAYBEAM;
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			return FIRETYPE_RAYLASER;
 		case W_SAWNOFF:
 		case W_SNUFF:
 			return FIRETYPE_SEMIAUTO;
@@ -287,309 +379,324 @@ float(float wep) GetFiretype =
 #define	LOWER_TORSO_X	2
 #define	LIMBS_X			3
 
-float(float wep, float type) getWeaponMultiplier =
+#ifndef CSQC
+float(float wep, float current_perks, float type) getWeaponMultiplier =
 {
+	float multiplier = 1;
 
 	switch (wep)
 	{
 		case W_COLT:
 			switch (type)
 			{
-				case HEAD_X: 		return 3;
-				case UPPER_TORSO_X: return 1;
-				case LOWER_TORSO_X: return 0.8;
-				case LIMBS_X: 		return 0.8;
+				case HEAD_X: 		multiplier = 3; break;
+				case UPPER_TORSO_X: multiplier = 1; break;
+				case LOWER_TORSO_X: multiplier = 0.8; break;
+				case LIMBS_X: 		multiplier = 0.8; break;
 			}
 			break;
 		case W_KAR:
 			switch (type)
 			{
-				case HEAD_X: 		return 3.5;
-				case UPPER_TORSO_X:	return 1.8;
-				case LOWER_TORSO_X:	return 1.7;
-				case LIMBS_X: 		return 0.7;
+				case HEAD_X: 		multiplier = 3.5; break;
+				case UPPER_TORSO_X:	multiplier = 1.8; break;
+				case LOWER_TORSO_X:	multiplier = 1.7; break;
+				case LIMBS_X: 		multiplier = 0.7; break;
 			}
 			break;
 		case W_ARMAGEDDON:
 			switch (type)
 			{
-				case HEAD_X: 		return 10;
-				case UPPER_TORSO_X:	return 6;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 10; break;
+				case UPPER_TORSO_X:	multiplier = 6; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_SPRING:
 			switch (type)
 			{
-				case HEAD_X: 		return 2;
-				case UPPER_TORSO_X:	return 1.2;
-				case LOWER_TORSO_X:	return 0.9;
-				case LIMBS_X: 		return 0.8;
+				case HEAD_X: 		multiplier = 2; break;
+				case UPPER_TORSO_X:	multiplier = 1.2; break;
+				case LOWER_TORSO_X:	multiplier = 0.9; break;
+				case LIMBS_X: 		multiplier = 0.8; break;
 			}
 			break;
 		case W_PULVERIZER:
 			switch (type)
 			{
-				case HEAD_X: 		return 8;
-				case UPPER_TORSO_X:	return 5;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 8; break;
+				case UPPER_TORSO_X:	multiplier = 5; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_THOMPSON:
 			switch (type)
 			{
-				case HEAD_X: 		return 4;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 4; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_GIBS:
 			switch (type)
 			{
-				case HEAD_X: 		return 5;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 5; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_357:
 			switch (type)
 			{
-				case HEAD_X: 		return 1.5;
-				case UPPER_TORSO_X:	return 1.1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 1.5; break;
+				case UPPER_TORSO_X:	multiplier = 1.1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_KILLU:
 			switch (type)
 			{
-				case HEAD_X: 		return 3;
-				case UPPER_TORSO_X:	return 1.5;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 3; break;
+				case UPPER_TORSO_X:	multiplier = 1.5; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_BAR:
 		case W_WIDOW:
 			switch (type)
 			{
-				case HEAD_X: 		return 2.7;
-				case UPPER_TORSO_X:	return 1.8;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1.5;
+				case HEAD_X: 		multiplier = 2.7; break;
+				case UPPER_TORSO_X:	multiplier = 1.8; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1.5; break;
 			}
 			break;
 		case W_BROWNING:
 		case W_ACCELERATOR:
 			switch (type)
 			{
-				case HEAD_X: 		return 3;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 3; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_FG:
 		case W_IMPELLER:
 			switch (type)
 			{
-				case HEAD_X: 		return 2.7;
-				case UPPER_TORSO_X:	return 2;
-				case LOWER_TORSO_X:	return 1.5;
-				case LIMBS_X: 		return 1.5;
+				case HEAD_X: 		multiplier = 2.7; break;
+				case UPPER_TORSO_X:	multiplier = 2; break;
+				case LOWER_TORSO_X:	multiplier = 1.5; break;
+				case LIMBS_X: 		multiplier = 1.5; break;
 			}
 			break;
 		case W_GEWEHR:
 			switch (type)
 			{
-				case HEAD_X: 		return 2.7;
-				case UPPER_TORSO_X:	return 1.25;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 2.7; break;
+				case UPPER_TORSO_X:	multiplier = 1.25; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_COMPRESSOR:
 			switch (type)
 			{
-				case HEAD_X: 		return 6;
-				case UPPER_TORSO_X:	return 2;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 6; break;
+				case UPPER_TORSO_X:	multiplier = 2; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_KAR_SCOPE:
 		case W_HEADCRACKER:
 			switch (type)
 			{
-				case HEAD_X: 		return 10;
-				case UPPER_TORSO_X:	return 1.5;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 10; break;
+				case UPPER_TORSO_X:	multiplier = 1.5; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_M1:
 			switch (type)
 			{
-				case HEAD_X: 		return 2.7;
-				case UPPER_TORSO_X:	return 1.25;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 0.7;
+				case HEAD_X: 		multiplier = 2.7; break;
+				case UPPER_TORSO_X:	multiplier = 1.25; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 0.7; break;
 			}
 			break;
 		case W_M1000:
 			switch (type)
 			{
-				case HEAD_X: 		return 6;
-				case UPPER_TORSO_X:	return 2;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 6; break;
+				case UPPER_TORSO_X:	multiplier = 2; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_M1A1:
 			switch (type)
 			{
-				case HEAD_X: 		return 2.7;
-				case UPPER_TORSO_X:	return 1.25;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 0.7;
+				case HEAD_X: 		multiplier = 2.7; break;
+				case UPPER_TORSO_X:	multiplier = 1.25; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 0.7; break;
 			}
 			break;
 		case W_WIDDER:
 			switch (type)
 			{
-				case HEAD_X: 		return 6;
-				case UPPER_TORSO_X:	return 2;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 6; break;
+				case UPPER_TORSO_X:	multiplier = 2; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_MP40:
 			switch (type)
 			{
-				case HEAD_X: 		return 4;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 4; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_AFTERBURNER:
 			switch (type)
 			{
-				case HEAD_X: 		return 5;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 5; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_MP5K:
 			switch (type)
 			{
-				case HEAD_X: 		return 4;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 4; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_KOLLIDER:
 			switch (type)
 			{
-				case HEAD_X: 		return 5;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 5; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_MG:
 		case W_BARRACUDA:
 			switch (type)
 			{
-				case HEAD_X: 		return 3;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 3; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_PPSH:
 		case W_REAPER:
 			switch (type)
 			{
-				case HEAD_X: 		return 4;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 4; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_PTRS:
 			switch (type)
 			{
-				case HEAD_X: 		return 3;
-				case UPPER_TORSO_X:	return 2.25;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 3; break;
+				case UPPER_TORSO_X:	multiplier = 2.25; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_PENETRATOR:
 			switch (type)
 			{
-				case HEAD_X: 		return 3;
-				case UPPER_TORSO_X:	return 3;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 3; break;
+				case UPPER_TORSO_X:	multiplier = 3; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_STG:
 			switch (type)
 			{
-				case HEAD_X: 		return 4;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 0.8;
+				case HEAD_X: 		multiplier = 4; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 0.8; break;
 			}
 			break;
 		case W_SPATZ:
 			switch (type)
 			{
-				case HEAD_X: 		return 5;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 0.8;
+				case HEAD_X: 		multiplier = 5; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 0.8; break;
 			}
 			break;
 		case W_TYPE:
 			switch (type)
 			{
-				case HEAD_X: 		return 4;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 4; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_SAMURAI:
 			switch (type)
 			{
-				case HEAD_X: 		return 5.5;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X: 		multiplier = 5.5; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 		case W_BK:
 		case W_KRAUS:
 			switch (type)
 			{
-				case HEAD_X:		return 2;
-				case UPPER_TORSO_X:	return 1;
-				case LOWER_TORSO_X:	return 1;
-				case LIMBS_X: 		return 1;
+				case HEAD_X:		multiplier = 2; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
+			}
+			break;
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			switch (type)
+			{
+				case HEAD_X:		multiplier = 21.7; break;
+				case UPPER_TORSO_X:	multiplier = 1; break;
+				case LOWER_TORSO_X:	multiplier = 1; break;
+				case LIMBS_X: 		multiplier = 1; break;
 			}
 			break;
 	}
-	return 1;
+
+	multiplier = Gamemode_GetWeaponLimbMultiplier(multiplier, current_perks, wep, type);
+	return multiplier;
 }
+#endif // CSQC
 
 float(float wep) getWeaponMag =
 {
@@ -680,6 +787,10 @@ float(float wep) getWeaponMag =
 			return 20;
 		case W_PORTER:
 			return 40;
+		case W_RAYMK2:
+			return 21;
+		case W_PORTERMK2:
+			return 42;
 		case W_STG:
 			return 30;
 		case W_SPATZ:
@@ -830,6 +941,12 @@ float(float wep) getWeaponAmmo =
 		case W_PORTER:
 			weapon_ammo = 200;
 			break;
+		case W_RAYMK2:
+			weapon_ammo = 162;
+			break;
+		case W_PORTERMK2:
+			weapon_ammo = 201;
+			break;
 		case W_SNUFF:
 			weapon_ammo = 60;
 			break;
@@ -873,7 +990,7 @@ float(float wep) getWeaponAmmo =
 }
 
 
-float(float wep) getWeaponDamage =
+float(float wep, float weapon_tier) getWeaponDamage =
 {
 	float weapon_damage = 0;
 
@@ -989,10 +1106,14 @@ float(float wep) getWeaponDamage =
 			weapon_damage = 1000;
 			break;
 		case W_RAY:
-			weapon_damage = 1000;
-			break;
 		case W_PORTER:
 			weapon_damage = 1000;
+			break;
+		case W_RAYMK2:
+			weapon_damage = 2300;
+			break;
+		case W_PORTERMK2:
+			weapon_damage = 4600;
 			break;
 		case W_SNUFF:
 			weapon_damage = 240;
@@ -1024,7 +1145,7 @@ float(float wep) getWeaponDamage =
     }
 
 #ifndef CSQC
-	weapon_damage = Gamemode_GetWeaponDamage(weapon_damage);
+	weapon_damage = Gamemode_GetWeaponDamage(weapon_damage, wep, weapon_tier);
 #endif // CSQC
 
     return weapon_damage;
@@ -1167,6 +1288,11 @@ float(float wep, float penetration_times) getWeaponPenetration =
 			if (penetration_times >= 2)
 				return 0;
 			return 0.8;
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			if (penetration_times >= 3)
+				return 0;
+			return 1;
 		default:
 			return 0;
     }
@@ -1472,6 +1598,16 @@ float(float wep, float delaytype) getWeaponDelay =
 				return 1.0;
 			else if (delaytype == TAKEOUT)
 				return 0.3;
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			if (delaytype == RELOAD)
+				return 2.98;
+			else if (delaytype == FIRE)
+				return 0.20;
+			else if (delaytype == PUTOUT)
+				return 0.4;
+			else if (delaytype == TAKEOUT)
+				return 0.5;
 		case W_SAWNOFF:
 			if (delaytype == RELOAD)
 				return 2.65;
@@ -1610,6 +1746,8 @@ float GetWeaponWalkSpeed(float perks, float weapon)
 		case W_IMPELLER:
 		case W_RAY:
 		case W_PORTER:
+		case W_RAYMK2:
+		case W_PORTERMK2:
 		case W_TESLA:
 		case W_DG3:
 		case W_MP5K:
@@ -1714,6 +1852,9 @@ vector GetWeaponADSOfs(float wep) =
 		case W_RAY:
 		case W_PORTER:
 			return [-12700, 2086.9, -1000];
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			return [-10663, 1760, -10000];
 		case W_GEWEHR:
 		case W_COMPRESSOR:
 			return [-5150, 5200, -2990];
@@ -2519,6 +2660,42 @@ float(float wep, float frametype, optional float z) GetFrame =
 					return 53;
 			}
 			break;
+		case W_RAYMK2:
+    	case W_PORTERMK2:
+			switch (frametype)
+			{
+				case FIRE_START:
+					return 1;
+				case FIRE_END:
+					return 2;
+				case RELOAD_START:
+					return 3;
+				case RELOAD_END:
+					return 21;
+				case SPRINT_IN_START:
+					return 22;
+				case SPRINT_IN_END:
+					return 24;
+				case SPRINT_START:
+					return 24;
+				case SPRINT_END:
+					return 24;
+				case SPRINT_OUT_START:
+					return 24;
+				case SPRINT_OUT_END:
+					return 25;
+				case TAKE_OUT_START:
+					return 28;
+				case TAKE_OUT_END:
+					return 30;
+				case PUT_OUT_START:
+					return 26;
+				case PUT_OUT_END:
+					return 28;
+				case RELOAD_CANCEL:
+					return 18;
+			}
+			break;
 		case W_STG:
    	 	case W_SPATZ:
 			switch (frametype)
@@ -2833,6 +3010,12 @@ string(float wep, float gorvmodel) GetWeaponModel =
 				return ("models/weapons/ray/g_ray.mdl");
 			else
 				return ("models/weapons/ray/v_ray.mdl");
+		case W_RAYMK2:
+    	case W_PORTERMK2:
+			if (gorvmodel)
+				return ("models/weapons/ray2/g_ray2.mdl");
+			else
+				return ("models/weapons/ray2/v_ray2.mdl");
 		case W_SAWNOFF:
 			if (gorvmodel)
 				return ("models/weapons/sawnoff/g_sawnoff.mdl");
@@ -2911,6 +3094,9 @@ string(float weapon, float has_bowie_knife) GetWeapon2Model =
 				return ("models/weapons/bk/v_blade_bowie.mdl");
 			else
 				return ("models/weapons/bk/v_blade_knife.mdl");
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			return ("models/weapons/ray2/v_ray2_energy.mdl");
 		default:
 			return "";
     }
@@ -2984,6 +3170,9 @@ string(float wep) GetWeaponSound =
 		case W_RAY:
     	case W_PORTER:
 			return "sounds/weapons/raygun/shoot.wav";
+		case W_RAYMK2:
+    	case W_PORTERMK2:
+			return "sounds/weapons/raygun/shoot.wav";
 		case W_SAWNOFF:
     	case W_SNUFF:
 			return "sounds/weapons/shotgun/shoot.wav";
@@ -3053,6 +3242,7 @@ float(float wep) IsPapWeapon = {
 		case W_REAPER:
 		case W_PENETRATOR:
 		case W_PORTER:
+		case W_PORTERMK2:
 		case W_SNUFF:
 		case W_SPATZ:
 		case W_GUT:
@@ -3128,6 +3318,8 @@ float(float wep)  EqualNonPapWeapon =
 			return W_PTRS;
 		case W_PORTER:
 			return W_RAY;
+		case W_PORTERMK2:
+			return W_RAYMK2;
 		case W_SNUFF:
 			return W_SAWNOFF;
 		case W_SPATZ:
@@ -3194,6 +3386,8 @@ float(float wep)  EqualPapWeapon =
 			return W_PENETRATOR;
 		case W_RAY:
 			return W_PORTER;
+		case W_RAYMK2:
+			return W_PORTERMK2;
 		case W_SAWNOFF:
 			return W_SNUFF;
 		case W_STG:
@@ -3582,6 +3776,22 @@ float(float wep, float anim_style, float dualwep, float curweaponframe)	PlayWeap
 				return true;
 			}
 			return false;
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			if (curweaponframe == 4) {
+				Sound_PlaySound(self, "sounds/weapons/raygun/open.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
+				return true;
+			} else if (curweaponframe == 10) {
+				Sound_PlaySound(self, "sounds/weapons/raygun/out.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
+				return true;
+			} else if (curweaponframe == 17) {
+				Sound_PlaySound(self, "sounds/weapons/raygun/in.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
+				return true;
+			} else if (curweaponframe == 18) {
+				Sound_PlaySound(self, "sounds/weapons/raygun/close.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
+				return true;
+			}
+			return false;
 		case W_STG:
 		case W_SPATZ:
 			if (curweaponframe == 15) {
@@ -3843,6 +4053,15 @@ void(float weptype) precache_extra =
 			precache_sound("sounds/weapons/raygun/shoot.wav");
 			precache_model("models/misc/raybeam.mdl");
 			break;
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			precache_sound("sounds/weapons/raygun/open.wav");
+			precache_sound("sounds/weapons/raygun/out.wav");
+			precache_sound("sounds/weapons/raygun/in.wav");
+			precache_sound("sounds/weapons/raygun/close.wav");
+			precache_sound("sounds/weapons/raygun/shoot.wav");
+			precache_model("models/misc/raybeam.mdl");
+			break;
 		case W_STG:
 		case W_SPATZ:
 			precache_sound ("sounds/weapons/stg/magout.wav");
@@ -3979,6 +4198,10 @@ float(float wep) getWeaponRecoilReturn =
 			return 0;
 		case W_PORTER:
 			return 0;
+		case W_RAYMK2:
+			return 0;
+		case W_PORTERMK2:
+			return 0;
 		case W_SAWNOFF:
 			return 1000;
 		case W_SNUFF:
@@ -4073,6 +4296,10 @@ float(float weapon, float stance) CrossHairWeapon =
 		case W_PORTER:
 			crosshair_spread = 5;
 			break;
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			crosshair_spread = 5;
+			break;
 		case W_PANZER:
 		case W_LONGINUS:
 		case W_TESLA:
@@ -4161,6 +4388,10 @@ float(float weapon, float stance) CrossHairMaxSpread =
 		case W_WIDDER:
 		case W_RAY:
 		case W_PORTER:
+			crosshair_spread = 35;
+			break;
+		case W_RAYMK2:
+		case W_PORTERMK2:
 			crosshair_spread = 35;
 			break;
 		case W_PANZER:
@@ -4526,6 +4757,9 @@ vector (float wep) GetWeaponFlash_Offset =
 			case W_RAY:
 			case W_PORTER:
 				return [12566, -6463, 49165];
+			case W_RAYMK2:
+			case W_PORTERMK2:
+				return [59811, -10698, 6142];
 			default:
 				return [5488, -2742, 35300];
 		}
@@ -4605,6 +4839,9 @@ float (float wep) GetWeaponFlash_Size = {
 		case W_RAY:
 		case W_PORTER:
 			return 10;
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			return 10;
 		default:
 			return 5;
 	}
@@ -4679,6 +4916,9 @@ float(float wep) GetWeaponZoomAmount =
 		case W_RAY:
 		case W_PORTER:
 			return 5;
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			return 5;
 		default: return 0;
 	}
 
@@ -4735,8 +4975,6 @@ float(float weapon, float stance) WepDef_WeaponSpread =
 	return (CrossHairWeapon(weapon, stance)/2) + self.cur_spread;
 }
 
-#endif // CSQC
-
 //
 // WepDef_CalculateMeleeDamage(weapon, has_bowie)
 // Returns the amount of melee damage the Player can
@@ -4744,26 +4982,37 @@ float(float weapon, float stance) WepDef_WeaponSpread =
 //
 float(float weapon, float has_bowie) WepDef_CalculateMeleeDamage =
 {
+	float melee_damage = 0;
+
 	switch(weapon) {
 		case W_BK:
 			if (has_bowie)
-				return 1000;
-			return 500;
+				melee_damage = 1000;
+			else
+				melee_damage = 500;
 			break;
 		case W_KRAUS:
 			if (has_bowie)
-				return 1500;
-			return 1000;
+				melee_damage = 1500;
+			else
+				melee_damage = 1000;
 			break;
 		default:
 			break;
 	}
 
-	if (has_bowie)
-		return 1000;
+	if (!melee_damage) {
+		if (has_bowie)
+			melee_damage = 1000;
+		else
+			melee_damage = 150;
+	}
 
-	return 150;
+	melee_damage = Gamemode_CalculateMeleeDamage(melee_damage, weapon, has_bowie);
+	return melee_damage;
 }
+
+#endif // CSQC
 
 //
 // WepDef_DoesNotADS(weapon)
@@ -4965,7 +5214,8 @@ float(float weapon) WepDef_DoesNotPlayUpgradedSound =
 	switch(weapon) {
 		case W_DG3:
 		case W_PORTER:
-    case W_FIW:
+		case W_PORTERMK2:
+    	case W_FIW:
 			return true;
 		default:
 			return false;
@@ -5028,6 +5278,7 @@ float(string weapon) WepDef_GetWeaponIDFromName =
 		case "wunderwaffe": return W_TESLA;
 		case "mp5k": return W_MP5K;
 		case "springfield": return W_SPRING;
+		case "ray_gun_2": return W_RAYMK2;
 		default: return W_NOWEP;
 	}
 	return W_COLT;
@@ -5109,10 +5360,54 @@ float(float weapon) WepDef_WeaponSecondaryModelIsAttachment =
 		case W_HEADCRACKER:
 		case W_BK:
 		case W_KRAUS:
+		case W_RAYMK2:
+		case W_PORTERMK2:
 			return true;
 		default:
 			return false;
 	}
 
 	return false;
+}
+
+//
+// WepDef_WeaponModelIsUnlit(weapon)
+// Returns TRUE if a weapon's model should be unlit
+// (full-bright).
+//
+float(float weapon) WepDef_WeaponModelIsUnlit =
+{
+	return false;
+}
+
+//
+// WepDef_Weapon2ModelIsUnlit(weapon)
+// Returns TRUE if a weapon's 2nd model should be unlit
+// (full-bright).
+//
+float(float weapon) WepDef_Weapon2ModelIsUnlit =
+{
+	switch(weapon) {
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			return true;
+	}
+
+	return false;
+}
+
+//
+// WepDef_GetWeaponBurstCount(weapon)
+// Returns number of times the weapon fires with
+// a single trigger pull.
+//
+float(float weapon) WepDef_GetWeaponBurstCount =
+{
+	switch(weapon) {
+		case W_RAYMK2:
+		case W_PORTERMK2:
+			return 3;
+	}
+
+	return 0;
 }

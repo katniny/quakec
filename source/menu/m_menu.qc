@@ -13,6 +13,9 @@ vector MENU_TEXT_SMALL = '12 12 0';
 vector MENU_TEXT_MEDIUM = '14 14 0';
 vector MENU_TEXT_LARGE = '28 28 0';
 
+float menu_leftarrow_pressed;
+float menu_rightarrow_pressed;
+
 void() input_tester =
 {
 	float char = 0;
@@ -220,12 +223,12 @@ void(float order, string bind) Menu_DrawOptionKey =
 };
 
 //
-// Menu_MapButton(order, id, bsp_name)
+// Menu_MapButton(order, id, bsp_name, map_category, usermap_index)
 // Displays a fancy menu option that loads
 // and draws the details for the given
 // .BSP.
 //
-float(float order, string id, string bsp_name, float usermap_index) Menu_MapButton =
+float(float order, string id, string bsp_name, float map_category, float usermap_index) Menu_MapButton =
 {
 	sui_set_align([SUI_ALIGN_START, SUI_ALIGN_START]);
 
@@ -280,6 +283,22 @@ float(float order, string id, string bsp_name, float usermap_index) Menu_MapButt
 		for(i = 0; i < 8; i++) {
 			sui_text([150, 30 + (i * 14)], MENU_TEXT_SMALL, user_maps[index].map_desc[i], [1, 1, 1], 1, 0);
 		}
+
+		// Map Badge
+		string badge_name = "";
+		vector coords_size = [0.25, 0.5];
+		vector coords_pos = [0, 0];
+
+		switch(map_category) {
+			case MAP_CATEGORY_NZPBETA: coords_pos = [0, 0]; badge_name = "NZ:P BETA (2011)"; break;
+			case MAP_CATEGORY_WAW: coords_pos = [0.25, 0]; badge_name = "WORLD AT WAR"; break;
+			case MAP_CATEGORY_NZP: coords_pos = [0, 0.5]; badge_name = "NZ:P ORIGINAL"; break;
+			case MAP_CATEGORY_BLACKOPSDS: coords_pos = [0.25, 0.5]; badge_name = "BLACK OPS (DS)"; break;
+			case MAP_CATEGORY_USER: coords_pos = [0.5, 0]; badge_name = "USERMAP"; break;
+		}
+
+		sui_text([30 + (getTextWidth(badge_name, MENU_TEXT_SUPERSMALL_x)/2), 5], MENU_TEXT_SUPERSMALL, badge_name, [1, 1, 0], 1, 0);
+		sui_subpic([12, 4], [20, 20], "gfx/menu/map_badges", [1, 1, 1], coords_pos, coords_size, 1, 0);
 
 		// Author/Description
 		if (user_maps[index].map_author != "") {
@@ -545,11 +564,11 @@ void(vector pos, vector size, vector minmaxsteps, string cvar_s, string name, st
 };
 
 //
-// Menu_CvarSlider(order, minmaxsteps, cvar_s, is_int, no_text, zero_is_one)
+// Menu_CvarSlider(order, button_id, minmaxsteps, cvar_s, is_int, no_text, zero_is_one)
 // Draws a Slider at the given order position
 // that controls a cvar.
 //
-void(float order, vector minmaxsteps, string cvar_s, float is_int, float no_text, float zero_is_one) Menu_CvarSlider =
+void(float order, string button_id, vector minmaxsteps, string cvar_s, float is_int, float no_text, float zero_is_one) Menu_CvarSlider =
 {
 	float current = cvar(cvar_s);
 	float old = current;
@@ -558,6 +577,24 @@ void(float order, vector minmaxsteps, string cvar_s, float is_int, float no_text
 	vector size = [150, 30];
 
 	my_slider(strcat(cvar_s, "sldr"), [position_x, (position_y - 17) + size_y * 0.5], [size_x, size_y * 0.5], minmaxsteps, current);
+
+	// For keyboard/gamepad navigation -- we need to check if the button associated
+	// with this slider is active and then do input checks to test if we should
+	// adjust the related cvar.
+	if (sui_is_hovered(button_id)) {
+		float interval = ((minmaxsteps[1] - minmaxsteps[0]) / minmaxsteps[2]);
+		if (menu_leftarrow_pressed) {
+			current -= interval;
+		} else if (menu_rightarrow_pressed) {
+			current += interval;
+		}
+
+		if (current < minmaxsteps[0])
+			current = minmaxsteps[0];
+
+		if (current > minmaxsteps[1])
+			current = minmaxsteps[1];
+	}
 
 	if (current != old) {
 		if (is_int)
@@ -865,6 +902,16 @@ void(float type) Menu_PlaySound =
 	localsound(sound, 0, cvar("nzp_uivolume"));
 };
 
+void() Menu_LeftArrowPressed =
+{
+	menu_leftarrow_pressed = TRUE;
+};
+
+void() Menu_RightArrowPressed =
+{
+	menu_rightarrow_pressed = TRUE;
+};
+
 float last_menu;
 void(vector size) root_menu =
 {
@@ -905,6 +952,9 @@ void(vector size) root_menu =
 
 		default: break;
 	}
+
+	menu_leftarrow_pressed = false;
+	menu_rightarrow_pressed = false;
 
 	// Menu enter sound
 	if (last_menu != current_menu) {

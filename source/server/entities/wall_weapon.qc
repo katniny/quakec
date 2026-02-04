@@ -28,6 +28,7 @@
 
 void() W_PlayTakeOut;
 void(entity client, float weapon) Gamemode_BuyWeapon;
+float(float current_cost, float weapon_cost, float weapon_id, float is_upgraded, float weapon_tier) Gamemode_GetCostForWeaponAmmo;
 
 // =================================
 // Wall Chalk Functionality
@@ -68,6 +69,9 @@ void() WallWeapon_Use =
 			break;
 		case 30: // Springfield
 			setmodel(self.enemy, GetWeaponModel(W_SPRING, 1));
+			break;
+		case 31: // Mark 2
+			setmodel(self.enemy, GetWeaponModel(W_RAYMK2, 1));
 			break;
 		default:
 			setmodel(self.enemy, GetWeaponModel(self.sequence + 1, 1));
@@ -128,6 +132,8 @@ void() weapon_wall =
 // Weapon Buy Trigger Functionality
 // =================================
 
+#define SPAWNFLAG_BUYWEAPON_STARTINACTIVE		1
+
 //
 // WallWeapon_TouchTrigger()
 // Rough and bloaty logic for the process of purchasing
@@ -144,13 +150,7 @@ void () WallWeapon_TouchTrigger =
 	}
 
 	if (self.weapon != 99) {
-
-#ifndef FTE
-
-		other.Weapon_Name_Touch = GetWeaponName(self.weapon);
-
-#endif // FTE
-
+		other.Weapon_Name_Touch = GetWeaponName(self.weapon, -1);
 		float slot;
 
 		// Player has this weapon in any of their slots, PaP'd or not.
@@ -164,6 +164,7 @@ void () WallWeapon_TouchTrigger =
 
 			// Set the cost and weapon value (for useprint).
 			wcost = (is_pap) ? self.pap_cost : self.cost2;
+			wcost = Gamemode_GetCostForWeaponAmmo(wcost, self.cost, other.weapons[slot].weapon_id, is_pap, other.weapons[slot - 1].weapon_tier);
 			wcost *= game_modifier_cost_multiplier;
 			float wep = (is_pap) ? EqualPapWeapon(self.weapon) : self.weapon;
 
@@ -203,7 +204,7 @@ void () WallWeapon_TouchTrigger =
 			// Subtract the cost from player points.
 			Player_RemoveScore(other, wcost);
 
-			if (self.enemy) {
+			if (self.enemy || self.target2 != "") {
 				SUB_UseTargets();
 			}
 
@@ -212,12 +213,7 @@ void () WallWeapon_TouchTrigger =
 	} else 
 	// Universal Ammo buy
 	{
-
-#ifndef FTE
-
-		other.Weapon_Name_Touch = GetWeaponName(other.weapon);
-
-#endif // FTE
+		other.Weapon_Name_Touch = GetWeaponName(other.weapon, -1);
 
 		if (other.currentammo < getWeaponAmmo(other.weapon)) {
 
@@ -248,7 +244,7 @@ void () WallWeapon_TouchTrigger =
 			// Subtract the cost from player points.
 			Player_RemoveScore(other, wcost);
 
-			if (self.enemy) {
+			if (self.enemy || self.target2 != "") {
 				SUB_UseTargets();
 			}
 		}
@@ -281,7 +277,7 @@ void () WallWeapon_TouchTrigger =
 			other.grenades = other.grenades | 2;
 			other.secondary_grenades = 2;
 			nzp_bettyprompt(other);
-			if (self.enemy)
+			if (self.enemy || self.target2 != "")
 			{
 				SUB_UseTargets();
 			}
@@ -313,7 +309,7 @@ void () WallWeapon_TouchTrigger =
 			//other.boughtweapon = true;
 			Player_RemoveScore(other, wcost);
 			other.primary_grenades = 4;
-			if (self.enemy)
+			if (self.enemy || self.target2 != "")
 			{
 				SUB_UseTargets();
 			}
@@ -339,7 +335,7 @@ void () WallWeapon_TouchTrigger =
 					Sound_PlaySound(other, "sounds/misc/ching.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
 					Sound_PlaySound(other, "sounds/weapons/knife/bowie.wav", SOUND_TYPE_WEAPON_OTHER, SOUND_PRIORITY_PLAYALWAYS);
 					other.ach_tracker_coll++;
-					if (self.enemy)
+					if (self.enemy || self.target2 != "")
 					{
 						SUB_UseTargets();
 					}
@@ -376,13 +372,13 @@ void () WallWeapon_TouchTrigger =
 		Sound_PlaySound(other, "sounds/misc/ching.wav", SOUND_TYPE_ENV_CHING, SOUND_PRIORITY_PLAYALWAYS);
 		other.reload_delay = 0;
 		Player_RemoveScore(other, wcost);
-		if (self.enemy) {
+		if (self.enemy || self.target2 != "") {
 			SUB_UseTargets();
 		}
 		tempe = self;
 		self = other;
 
-		Weapon_GiveWeapon(tempe.weapon, 0, 0);
+		Weapon_GiveWeapon(tempe.weapon, 0, 0, 0);
 
 		self = tempe;
 
@@ -417,6 +413,16 @@ void() WallWeapon_LinkChalk =
 }
 
 //
+// WallWeapon_EnableTouch()
+// Triggered by external ents, enables
+// ability to use Trigger.
+//
+void() WallWeapon_EnableTouch =
+{
+	self.touch = WallWeapon_TouchTrigger;
+};
+
+//
 // buy_weapon()
 // Quake Spawn Function for Weapon Trigger.
 //
@@ -441,7 +447,11 @@ void() buy_weapon =
 		precache_model (weaponname);
 	
 	precache_extra (self.weapon);
-	self.touch = WallWeapon_TouchTrigger;
+
+	if (!(self.spawnflags & SPAWNFLAG_BUYWEAPON_STARTINACTIVE))
+		self.touch = WallWeapon_TouchTrigger;
+	else
+		self.use = WallWeapon_EnableTouch;
 	
 	self.think = WallWeapon_LinkChalk;
 	self.message = "";

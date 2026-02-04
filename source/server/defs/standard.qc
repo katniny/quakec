@@ -151,6 +151,8 @@ void            end_sys_globals;						// flag for structure dumping
 .string			Weapon_Name;
 .string			Weapon_Name_Touch;
 .float          currentmag2;
+.float			viewmodel_effects;
+.float			viewmodel2_effects;
 .float          maxspeed;
 .float     		facingenemy;
 .float          scale;
@@ -267,7 +269,7 @@ string(float num)                                                               
 string  (string s)                                                                              strtolower          = #480;
 float   (float caseinsensitive, string s)                                                       crc16               = #494;
 void    (string trackname)                                                                    	songegg             = #500;
-void    ()                                                                                   	nzp_maxammo         = #501;
+void    ()                                                                                   	nzp_poweruptoast         = #501;
 void    (entity who)                                                                            grenade_pulse       = #502;
 float   ()                                                                                      nzp_maxai           = #503;
 void    (entity who)                                                                            nzp_bettyprompt     = #504;

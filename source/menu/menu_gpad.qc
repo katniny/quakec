@@ -111,7 +111,7 @@ void() Menu_Gamepad =
     }
     Menu_DrawOptionValue(2, rumble_string);
 
-    Menu_Button(3, "gp_aima", "AIM ASSIST", "Toggle Camera Aim Assist.") ? Menu_Gamepad_ApplyAimAssist() : 0;
+    Menu_Button(3, "gp_aima", "AIM ASSIST", "Toggle Aim Sensitivity+Snapping Assist.") ? Menu_Gamepad_ApplyAimAssist() : 0;
     string aa_string = "";
     switch(cvar("in_aimassist")) {
         case 0: aa_string = "DISABLED"; break;
@@ -121,10 +121,10 @@ void() Menu_Gamepad =
     Menu_DrawOptionValue(3, aa_string);
 
     Menu_Button(4, "gp_senx", "X AXIS SENSITIVITY", "Alter X-Axis Look Sensitivity.") ? 0 : 0;
-    Menu_CvarSlider(4, [0, 4, 16], "joypitchsensitivity", false, false, false);
+    Menu_CvarSlider(4, "gp_senx", [0, 4, 16], "joypitchsensitivity", false, false, false);
 
     Menu_Button(5, "gp_seny", "Y AXIS SENSITIVITY", "Alter Y-Axis Look Sensitivity.") ? 0 : 0;
-    Menu_CvarSlider(5, [0, 4, 16], "joyyawsensitivity", false, false, false);
+    Menu_CvarSlider(5, "gp_seny", [0, 4, 16], "joyyawsensitivity", false, false, false);
 
     Menu_DrawDivider(12.25);
     Menu_Button(-2, "gp_apply", "APPLY", "Save & Apply Settings.") ? Menu_Gamepad_ApplySettings() : 0;

@@ -27,6 +27,7 @@
 
 void(vector where, float time_alive) SpawnSpark;
 void() MBOX_Touch;
+string(string taunt) Gamemode_GetGoodByeTaunt;
 
 #define MBOX_SPAWNFLAG_NOTHERE 		1
 #define MBOX_SPAWNFLAG_NOLIGHT 		2
@@ -387,7 +388,10 @@ void() MBOX_FlyAway =
 void() MBOX_Leave =
 {
 	// Broadcast the laughter
-	Sound_PlaySound(world, "sounds/pu/byebye.wav", SOUND_TYPE_ENV_VOICE, SOUND_PRIORITY_PLAYALWAYS);
+	string taunt = "sounds/pu/byebye.wav";
+	taunt = Gamemode_GetGoodByeTaunt(taunt);
+	Sound_PlaySound(world, taunt, SOUND_TYPE_ENV_VOICE, SOUND_PRIORITY_PLAYALWAYS);
+
 	// "Woosh" Effect
 	Sound_PlaySound(self, "sounds/pu/drop.wav", SOUND_TYPE_ENV_OBJECT, SOUND_PRIORITY_PLAYALWAYS);
 	// Spark Effect
@@ -673,13 +677,7 @@ void() MBOX_Touch =
 		Player_UseprintWithWait(other, self, 6, mystery_box_cost, 0);
 	}
 	if (self.boxstatus == 2 && self.owner == other) {
-
-#ifndef FTE
-
-		other.Weapon_Name_Touch = GetWeaponName(self.boxweapon.weapon);
-
-#endif // FTE
-
+		other.Weapon_Name_Touch = GetWeaponName(self.boxweapon.weapon, -1);
 		Player_UseprintWithWait(other, self, 7, 0, self.boxweapon.weapon);
 	}
 	
@@ -714,7 +712,7 @@ void() MBOX_Touch =
 				tempe = self;
 				self = other;
 
-				Weapon_GiveWeapon(tempe.boxweapon.weapon, 0, 0);
+				Weapon_GiveWeapon(tempe.boxweapon.weapon, 0, 0, 0);
 				self = tempe;
 				MBOX_FreeEnt(self.boxweapon);
 				MBOX_PlayCloseAnimation();
@@ -759,6 +757,7 @@ float MBOX_GetWeaponIDFromMB1(float mbox_id) =
         case 24: return W_TYPE;
         case 25: return W_MP5K;
         case 26: return W_SPRING;
+		case 27: return W_RAYMK2;
         default: return W_COLT;
     }
     return W_COLT;
@@ -960,6 +959,11 @@ void() MBOX_LoadData =
         mystery_box_weapons[i].weapon_id = MBOX_GetWeaponIDFromMB1(i);
         mystery_box_weapons[i].allowed = true;
         mystery_box_weapons[i].rarity = -1;
+
+		// .. except the Mk II
+		if (mystery_box_weapons[i].weapon_id == W_RAYMK2) {
+			mystery_box_weapons[i].allowed = false;
+		}
     }
 
     // Precache it all.
@@ -1012,9 +1016,11 @@ void() mystery_box =
     // Store the custom presentation as globals
     mystery_box_model = self.model;
     mystery_box_glow_model = self.weapon2model;
-    mystery_box_open_sound = self.oldmodel;
     mystery_box_close_sound = self.powerup_vo;
     mystery_box_cost = floor(self.cost * game_modifier_cost_multiplier);
+
+	if (!mystery_box_open_sound)
+		mystery_box_open_sound = self.oldmodel;
 
 	precache_model(mystery_box_model);
 

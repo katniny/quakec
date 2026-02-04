@@ -437,13 +437,14 @@ void(entity person) FTE_UpdateDynamicFOV =
 #ifdef FTE
 
 //
-// nzp_maxammo()
-// FTE equivalent of nzp_maxammo builtin.
+// nzp_poweruptoast()
+// FTE equivalent of nzp_poweruptoast builtin.
 //
-void() nzp_maxammo =
+void(float powerup_id) nzp_poweruptoast =
 {
 	WriteByte(MSG_MULTICAST, SVC_CGAMEPACKET);
-	WriteByte(MSG_MULTICAST, CSQC_EVENT_MAXAMMOTEXT);
+	WriteByte(MSG_MULTICAST, CSQC_EVENT_POWERUPTOAST);
+	WriteByte(MSG_MULTICAST, powerup_id);
 	multicast('0 0 0', MULTICAST_ALL);
 };
 
@@ -610,6 +611,9 @@ void(entity ent) Ent_FakeRemove =
 	ent.bbmins = ent.mins;
 	ent.bbmaxs = ent.maxs;
 	ent.sprintflag = ent.solid;
+	ent.use = SUB_Null;
+	ent.think = SUB_Null;
+	ent.nextthink = 0;
 
 	ent.solid = SOLID_NOT;
 	setsize(ent, '0 0 0', '0 0 0');

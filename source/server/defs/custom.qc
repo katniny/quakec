@@ -46,6 +46,7 @@
 #define SPAWN_8_CLASS       "info_player_8_spawn"
 
 float cheats_have_been_activated;
+float current_month_of_year;
 
 // cypress - NOTE
 // on/off are inverted compared to goldsrc for
@@ -63,6 +64,7 @@ float 	framecount;
 
 float music_override;
 
+.float 	round_delay;
 .float	recoil_delay;
 .float 	cur_spread;
 
@@ -140,7 +142,7 @@ entity local_client;
 													// prohibits sprinting.
 .float speed_penalty_time;							// A timer for how long speed_penalty is applied for.
 
-float sprint_max_time = 4.0;
+float sprint_max_time;
 .float sprinting;
 .float weaponskin;
 .float stamina;
@@ -176,6 +178,7 @@ void (float shotcount, float sprd, float Damage, float side) FireTrace;
 .float progress_bar_time;
 .float progress_bar_percent;
 .float weaponbk;
+.float tierbk;
 .float currentmag;
 .float currentmag2;
 .float currentmagbk;
@@ -186,6 +189,12 @@ void (float shotcount, float sprd, float Damage, float side) FireTrace;
 .float weapon2frame;
 .float reloadinterupted;
 .float hitcount;
+.float viewmodel_effects;
+.float viewmodel2_effects;
+.float weapon_burst_count;
+.float weapon_burst_override;
+.float weapon_autoreload_pending;
+.float weapon2_autoreload_pending;
 
 #ifdef FTE
 
@@ -214,6 +223,7 @@ var struct guninventory_struct
 	float 	weapon_magazine_left;
 	float 	weapon_reserve;
 	float 	weapon_skin;
+	float 	weapon_tier;
 	float 	is_mulekick_weapon;
 };
 
@@ -254,6 +264,7 @@ void Set_W_Frame (float startframe, float endframe, float duration, float funcca
 .float anim_weapon2_time;
 .float weaponframe_end;
 .float weapon2frame_end;
+.float weapon_tier;
 .float callfuncat;
 .float callfuncat2;
 .float new_anim_stop;
@@ -464,6 +475,8 @@ float crandom();
 #define PERK_MULEKICK_DEFAULT_MODEL		"models/machines/quake_scale/mulekick.mdl"
 
 float isPowerOn;
+float num_power_switches;
+float activated_power_switches;
 .float isBuying; // naievil -- used for checking if a perk is being consumed, limits glitching
 .float perks;
 .float perk_delay;
@@ -479,14 +492,22 @@ float game_modifier_can_use_equipment;
 float game_modifier_can_earn_misc_score;
 float game_modifier_can_packapunch;
 float game_modifier_powerup_free_perk;
+float game_modifier_powerup_free_perk_is_rare;
 float game_modifier_powerup_max_ammo;
 float game_modifier_powerup_weapon_upgrade;
+float game_modifier_powerup_bonus_points;
+float game_modifier_powerup_toast_for_all;
 float game_modifier_perk_purchase_limit;
 float game_modifier_cost_multiplier;
 float game_modifier_grenades_explode_on_contact;
+float game_modifier_packapunch_uses_tiers;
+float game_modifier_packapunch_is_instant;
+float game_modifier_maxammo_fills_magazine;
+string game_modifier_hellhound_fog_color;
+string game_modifier_default_fog_color;
 
 // Mystery Box
-#define MAX_BOX_WEAPONS 		27
+#define MAX_BOX_WEAPONS 		28
 
 .float 	boxstatus;
 .entity boxweapon;
@@ -511,11 +532,35 @@ string 	mystery_box_close_sound;
 entity 	mystery_boxes[16];
 vector 	mystery_box_start_origin;
 
+// Zoning
+#define MAX_ZONES					32
+#define MAX_ZONE_BRUSHES			8
+#define MAX_ADJ_ZONE				8
+#define MAX_ZONE_WAY_TARGETS		6
+
+var struct zone_struct
+{
+	string 	name;
+	float 	id;
+	string 	targets;
+	string 	fog_value;
+	float 	num_adj_zones;
+	float 	adj_zone_id [MAX_ADJ_ZONE];
+	float 	num_brushes;
+	vector	brush_mins [MAX_ZONE_BRUSHES];
+	vector	brush_maxs [MAX_ZONE_BRUSHES];
+	float	num_way_targets;
+	string	way_target [MAX_ZONE_WAY_TARGETS];
+} stored_zones[MAX_ZONES] = {};
+
+float has_zone_file;
+
 #ifdef FTE
 
-//powerups
 .float x2_icon;
 .float insta_icon;
+.string	Weapon_Name;
+.string	Weapon_Name_Touch;
 
 #endif // FTE
 

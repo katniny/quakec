@@ -51,8 +51,11 @@ float active_gamemode;
 
 float bettyprompt_time;
 
-float hud_maxammo_endtime;
-float hud_maxammo_starttime;
+float hud_toast_endtime;
+float hud_toast_starttime;
+float hud_toast_puid;
+float hud_perk_orientation;
+vector hud_round_color;
 
 float nameprint_time;
 float HUD_Change_time; 
@@ -113,10 +116,13 @@ float sniper_hold_breath;
 
 float K_LEFTDOWN, K_RIGHTDOWN, K_BACKDOWN, K_FORWARDDOWN;
 
+vector TEXT_PURPLE    = [0.46, 0, 0.46];
 vector TEXT_LIGHTBLUE = [0, 0.46, 0.70];
 vector TEXT_ORANGE    = [0.92, 0.74, 0];
 vector TEXT_GREEN     = [0, 0.90, 0.13];
 vector TEXT_RED       = [1, 0, 0];
+vector TEXT_LIGHTRED  = [1, 0.50, 0.50];
+vector TEXT_YELLOW    = [1, 0.87, 0.13];
 
 float screenflash_type;
 float screenflash_color;
@@ -167,20 +173,3 @@ float hide_viewmodel;
 vector playerOrigin;
 vector playerOriginOld;
 vector playerVelocity;
-
-//
-// List of Zombie limb meshes for custom skinning
-//
-string zombie_skins[] =
-{
-	"models/ai/zb%.mdl",
-	"models/ai/zbc%.mdl",
-	"models/ai/zcfull.mdl",
-	"models/ai/zhc^.mdl",
-	"models/ai/zalc(.mdl",
-	"models/ai/zarc(.mdl",
-	"models/ai/zfull.mdl",
-	"models/ai/zh^.mdl",
-	"models/ai/zal(.mdl", 
-	"models/ai/zar(.mdl"
-};
